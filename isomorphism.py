@@ -17,14 +17,14 @@ def gen_func(n, m):
     funcoes = []
     mapsto = [0] * n
     while mapsto != [m - 1] * n:
-        funcoes.append(mapsto.copy())
+        funcoes.append(tuple(mapsto.copy()))
         # print(func,'\n')
         mapsto[n - 1] += 1
         for i in range(1, n):
             if mapsto[n - i] >= m:
                 mapsto[n - i] = 0
                 mapsto[n - i - 1] += 1
-    funcoes.append(mapsto)
+    funcoes.append(tuple(mapsto))
     return funcoes
 
 """Próximo passo: para cada função f de V(x) em V(y), verificar se f é homomorfismo. Para isso, vamos 
@@ -122,3 +122,16 @@ def chromatic_number(X):
     while 1:
         if verify_homo(X, k(n)): return n
         n += 1
+
+#verifica se X é um core
+def verify_core(X):
+    if list_aut(X)==list_homo(X,X) :return True
+    return False
+
+#encontra core de X
+def find_core(X):
+    # list_core=[k(2),k(3)]
+    if verify_core(X): return X
+    for i in range(len(X)):
+        Y=np.delete(np.delete(X,i,0),i,1)
+        if verify_homo(X,Y): return find_core(Y)

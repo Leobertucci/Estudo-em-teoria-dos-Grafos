@@ -56,6 +56,11 @@ k4 = np.array([[0, 1, 1, 1],
                [1, 0, 1, 1],
                [1, 1, 0, 1],
                [1, 1, 1, 0]])
+k5 = np.array([[0, 1, 1, 1, 0],
+               [1, 0, 1, 0, 1],
+               [1, 1, 0, 1, 1],
+               [1, 0, 1, 0, 1],
+               [0, 1, 1, 1, 0]])
 #
 # lk4=lineGraph(k4)
 # print(lk4)
@@ -64,4 +69,9 @@ k4 = np.array([[0, 1, 1, 1],
 # print(len(list_aut(lk4)))
 
 # print(verify_homo(k4,k3))
-print(chromatic_number(b3_2))
+# print(chromatic_number(b3_2))
+
+# print(verify_core(k(5)))
+# print(len(list_aut(G)))
+# print(len(list_homo(G,G)))
+print(find_core(k5))
