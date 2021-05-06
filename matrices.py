@@ -10,24 +10,24 @@ def degree(u):
         s += i
     return s
 
-def laplacian(X):
+def laplacian(G):
     # L=[]
-    # for u in X:
+    # for u in G:
     # L.append(list(map(lambda i: -i, u.copy())))
-    L = (-1) * np.copy(X)
-    for i in range(len(X)):
-        L[i][i] = degree(X[i])
+    L = (-1) * np.copy(G)
+    for i in range(len(G)):
+        L[i][i] = degree(G[i])
     return L
 
-"""Gerando a matriz de adjacência do grafo de linha de um grafo X."""
+"""Gerando a matriz de adjacência do grafo de linha de um grafo G."""
 
 # recebe duas tuplas com dois elementos, cada uma representando uma aresta, e retorna se elas são incidentes.
 def incident(e, f):
     if e[0] in f or e[1] in f: return True
     return False
 
-def lineGraph(X):
-    edgs = iso.edges(X)
+def lineGraph(G):
+    edgs = iso.edges(G)
     m = len(edgs)
     lineG = np.zeros((m, m), dtype=int)
     for i in range(m):

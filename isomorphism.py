@@ -9,7 +9,7 @@ Optei inicialmente por usar matrizes de adjacência para representar grafos, poi
 homomorfismos, acredito que teremos que verificar adjacência de vértices muitas vezes.
 """
 
-"""A ideia de um algoritmo inicial é gerar todas as funções dos vértices de x nos vértices de y e verificar 
+"""A ideia de um algoritmo inicial é gerar todas as funções dos vértices de G nos vértices de H e verificar 
 uma a uma se alguma delas é um homomorfismo. Começamos com uma função que gera todas as funções de um 
 conjunto com n elementos {0,1,...,n-1} em um conjunto com m elementos {0,1,...,m-1}. Trataremos uma função f 
 como uma lista com n elementos, onde o valor na posição i indica o valor de f(i)."""
@@ -28,25 +28,24 @@ def gen_func(n, m):
     funcoes.append(tuple(mapsto))
     return funcoes
 
-"""Próximo passo: para cada função f de V(x) em V(y), verificar se f é homomorfismo. Para isso, vamos 
+"""Próximo passo: para cada função f de V(G) em V(H), verificar se f é homomorfismo. Para isso, vamos 
 iterar nas arestas de x. Retorna o primeiro f que encontrar, ou False caso não encontre nenhum."""
 
-# retorna uma lista com as arestas de X. Note que tratamos uma aresta como uma tupla, ordenada, para
-# facilitar iteração nas arestas. Ao verificar se uma aresta uv pertence a edges(X), basta garantir que
-# uv está em ordem crescente.
-def edges(X):
+# retorna uma lista com as arestas de G. Note que tratamos uma aresta como uma tupla, ordenada, para facilitar
+# iteração nas arestas. Ao verificar se uma aresta uv pertence a edges(G), basta garantir que uv está em ordem crescente.
+def edges(G):
     edgs = []
-    for i in range(len(X)):
-        for j in range(i + 1, len(X)):
-            if X[i][j]: edgs.append((i, j))
+    for i in range(len(G)):
+        for j in range(i + 1, len(G)):
+            if G[i][j]: edgs.append((i, j))
     return edgs
 
-def verify_homo(X, Y):
-    for f in gen_func(len(X), len(Y)):
+def verify_homo(G, H):
+    for f in gen_func(len(G), len(H)):
         homo = True
         # vejamos se f é homomorfismo:
-        for (i, j) in edges(X):
-            if Y[f[i]][f[j]] == 0:
+        for (i, j) in edges(G):
+            if H[f[i]][f[j]] == 0:
                 homo = False
                 break
         if homo: return f
@@ -65,49 +64,49 @@ def invert(f):
         g[f[i]] = i
     return g
 
-def verify_iso(X, Y):
-    if len(X) != len(Y): return False
-    for f in list(itertools.permutations(list(range(len(X))))):
+def verify_iso(G, H):
+    if len(G) != len(H): return False
+    for f in list(itertools.permutations(list(range(len(G))))):
         iso = True
         # vejamos se f é homomorfismo:
-        for (i, j) in edges(X):
-            if Y[f[i]][f[j]] == 0:
+        for (i, j) in edges(G):
+            if H[f[i]][f[j]] == 0:
                 iso = False
                 break
         if iso:  # vejamos se f^-1 é homomorfismo:
             g = invert(f)
-            for (i, j) in edges(Y):
-                if X[g[i]][g[j]] == 0:
+            for (i, j) in edges(H):
+                if G[g[i]][g[j]] == 0:
                     return False
         if iso: return f
     return False
 
-# Listando todos os automorfismos de X
-def list_aut(X):
+# Listando todos os automorfismos de G
+def list_aut(G):
     lista_auts = []
-    for f in list(itertools.permutations(list(range(len(X))))):
+    for f in list(itertools.permutations(list(range(len(G))))):
         iso = True
-        for (i, j) in edges(X):
-            if X[f[i]][f[j]] == 0:
+        for (i, j) in edges(G):
+            if G[f[i]][f[j]] == 0:
                 iso = False
                 break
         if iso:
             g = invert(f)
-            for (i, j) in edges(X):
-                if X[g[i]][g[j]] == 0:
+            for (i, j) in edges(G):
+                if G[g[i]][g[j]] == 0:
                     iso = False
                     break
         if iso: lista_auts.append(f)
     return lista_auts
 
-# Listando homomorfismos de X em Y
-def list_homo(X, Y):
+# Listando homomorfismos de G em H
+def list_homo(G, H):
     lista_homo = []
-    for f in gen_func(len(X), len(Y)):
+    for f in gen_func(len(G), len(H)):
         homo = True
         # vejamos se f é homomorfismo:
-        for (i, j) in edges(X):
-            if Y[f[i]][f[j]] == 0:
+        for (i, j) in edges(G):
+            if H[f[i]][f[j]] == 0:
                 homo = False
                 break
         if homo: lista_homo.append(f)
@@ -129,38 +128,37 @@ def c(n):
     return cn
 
 # grafo complementar
-def complement(X):
-    n = len(X)
-    Y=np.zeros((n, n), dtype=int)
+def complement(G):
+    n = len(G)
+    H=np.zeros((n, n), dtype=int)
     for i in range(n):
         for j in range(i+1,n):
-            Y[i][j]=(X[i][j]+1)%2
-            Y[j][i]=(X[i][j]+1)%2
-    return Y
+            H[i][j]= (G[i][j] + 1) % 2
+            H[j][i]= (G[i][j] + 1) % 2
+    return H
 
-# número cromático de X
-def chromatic_number(X):
+# número cromático de G
+def chromatic_number(G):
     n = 1
     while 1:
-        if verify_homo(X, k(n)): return n
+        if verify_homo(G, k(n)): return n
         n += 1
 
-# verifica se X é um core comparando grupo de automorfismos com monoide de endomorfismos
-def is_core(X):
-    if list_aut(X)==list_homo(X,X) :return True
+# verifica se G é um core comparando grupo de automorfismos com monoide de endomorfismos
+def is_core(G):
+    if list_aut(G)==list_homo(G, G) :return True
     return False
 
-# encontra core de X
-def find_core(X):
-    if is_core(X): return X
-    for i in range(len(X)):
-        Y=np.delete(np.delete(X,i,0),i,1)
-        if verify_homo(X,Y): return find_core(Y)
+# encontra core de G
+def find_core(G):
+    if is_core(G): return G
+    for i in range(len(G)):
+        Y=np.delete(np.delete(G, i, 0), i, 1)
+        if verify_homo(G, Y): return find_core(Y)
 
-# busca em largura, retorna vetor de predecessor e de camada.
-# funciona em grafos simples ou orientados
-def bfs(X, s):
-    n=len(X)
+# busca em largura, retorna vetor de predecessor e de camada. Funciona em grafos simples ou orientados
+def bfs(G, s):
+    n=len(G)
     camada=[-1]*n # ninguém explorado
     camada[s]=0
     pred=[-1]*n
@@ -169,17 +167,16 @@ def bfs(X, s):
     while not q.empty():
         u=q.get()
         for v in range(n):
-            if X[u][v]==1:
+            if G[u][v]==1:
                 if camada[v]==-1:
                     q.put(v)
                     camada[v]=camada[u]+1
                     pred[v]=u
     return pred,camada
 
-# retorna o menor caminho entre dois vértices u e v em um grafo simples ou orientado X
-# pode ser feito parando bfs quando achar caminho
-def path(X,u,v):
-    pred,camada=bfs(X,u)
+# retorna o menor caminho entre dois vértices u e v em um grafo simples ou orientado G pode ser feito parando bfs quando achar caminho
+def path(G, u, v):
+    pred,camada=bfs(G, u)
     if camada[v]==-1: return False
     w=v
     p=[]
@@ -190,10 +187,9 @@ def path(X,u,v):
     p.reverse()
     return p
 
-# retorna bipartição de X ou falso. Adaptação do bfs, tempo polinomial. Fixado para funcionar em
-# grafos desconexos
-def is_bipartite(X):
-    n = len(X)
+# retorna bipartição de G ou falso. Adaptação do bfs, tempo polinomial. Fixado para funcionar em grafos desconexos
+def is_bipartite(G):
+    n = len(G)
     camada = [-1]*n  # ninguém explorado
     color = [-1]*n # ninguém colorido
     q = queue.Queue()
@@ -205,7 +201,7 @@ def is_bipartite(X):
         while not q.empty():
             u = q.get()
             for v in range(n):
-                if X[u][v] == 1:
+                if G[u][v] == 1:
                     if color[v]==color[u]: return False
                     if camada[v] == -1:
                         q.put(v)
@@ -219,36 +215,36 @@ def is_bipartite(X):
 
 
 # Adaptação algoritmo de fluxo máximo para encontrar emparelhamento máximo em um grafo bipartido.
-def matching_bip(X):
-    n=len(X)
+def matching_bip(G):
+    n=len(G)
     # primeiro encontrar bipartição:
     try:
-        A,B = is_bipartite(X)
+        A,B = is_bipartite(G)
     except:
-        print("X não é bipartido")
+        print("G não é bipartido")
         return
     # orienta arestas de A para B:
     for u in B:
-        X[u]*=(-1)
+        G[u]*=(-1)
     # adiciona fonte e sorvedouro:
     fonte=np.array([0]*n)
     for u in A:
         fonte[u]=1
-    X=np.vstack((X,fonte))
-    X=np.hstack((X,np.transpose([(-1)*np.concatenate([fonte,[0]])])))
+    G=np.concatenate((G, [fonte]))
+    G=np.concatenate((G, np.transpose([(-1) * np.concatenate([fonte, [0]])])),1)
     sorv = np.array([0]*(n+1))
     for u in B:
         sorv[u] = -1
-    X = np.vstack((X, sorv))
-    X = np.hstack((X, np.transpose([(-1)*np.concatenate([sorv,[0]])])))
+    G = np.concatenate((G, [sorv]))
+    G = np.concatenate((G, np.transpose([(-1) * np.concatenate([sorv, [0]])])),1)
     # encontra caminho p da fonte para sorvedouro, atualiza M por meio de diferença simétrica com p e
-    # altera direção do caminho p em X:
+    # altera direção do caminho p em G:
     M=[]
-    p = path(X,n,n+1)
+    p = path(G, n, n + 1)
     while p:
-        for i in range(1,len(p)):    #altera sentido de p em X
-            X[p[i-1]][p[i]] *= -1
-            X[p[i]][p[i-1]] *= -1
+        for i in range(1,len(p)):    #altera sentido de p em G
+            G[p[i - 1]][p[i]] *= -1
+            G[p[i]][p[i - 1]] *= -1
         p.pop(0)
         p.pop(len(p)-1)
         arestas_p=[]
@@ -257,29 +253,29 @@ def matching_bip(X):
         for e in arestas_p:     #dif simétrica M e arestas_p
             if e in M: M.remove(e)
             else: M.append(e)
-        p = path(X, n, n + 1)
+        p = path(G, n, n + 1)
     return M
 
-#tamanho emparelhamento máximo de X bipartido
-def ni(X):
-    return len(matching_bip(X))
+#tamanho emparelhamento máximo de G bipartido
+def ni(G):
+    return len(matching_bip(G))
 
-#tamanho 2-emparelhamento máximo de X. Ver 6.1.4 Lovász
-def ni2(X):
-    n=len(X)
+#tamanho 2-emparelhamento máximo de G. Ver 6.1.4 Lovász
+def ni2(G):
+    n=len(G)
     Y=np.zeros((2*n, 2*n), dtype=int)
-    for (i,j) in edges(X):
+    for (i,j) in edges(G):
         Y[2*i][2*j+1]=1
         Y[2*j+1][2*i]=1
         Y[2*i+1][2*j]=1
         Y[2*j][2*i+1]=1
     return ni(Y)
 
-#verifica se X é 2-bicrítico
-def is_2bicritic(X):
-    n = len(X)
+#verifica se G é 2-bicrítico
+def is_2bicritic(G):
+    n = len(G)
     for i in range(n):
-        Y=np.delete(np.delete(X,i,0),i,1)
+        Y=np.delete(np.delete(G, i, 0), i, 1)
         if ni2(Y) != n-1:   # 2-emparelhamento máximo é perfeito?
             return False
     return True
