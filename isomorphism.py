@@ -3,6 +3,7 @@
 import itertools
 import numpy as np
 import queue
+from matrices import *
 
 """
 Optei inicialmente por usar matrizes de adjacência para representar grafos, pois como trabalharemos com
@@ -111,31 +112,6 @@ def list_homo(G, H):
                 break
         if homo: lista_homo.append(f)
     return lista_homo
-
-# retorna grafo completo em n vértices
-def k(n):
-    kn = np.ones((n, n), dtype=int)
-    for i in range(n):
-        kn[i][i] = 0
-    return kn
-
-# ciclo em n vértices
-def c(n):
-    cn=np.zeros((n, n), dtype=int)
-    for i in range(n):
-        cn[i][i-1]=1
-        cn[i][i-n+1]=1
-    return cn
-
-# grafo complementar
-def complement(G):
-    n = len(G)
-    H=np.zeros((n, n), dtype=int)
-    for i in range(n):
-        for j in range(i+1,n):
-            H[i][j]= (G[i][j] + 1) % 2
-            H[j][i]= (G[i][j] + 1) % 2
-    return H
 
 # número cromático de G
 def chromatic_number(G):

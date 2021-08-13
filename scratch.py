@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+import numpy as np
 
 from isomorphism import *
 from matrices import *
+np.set_printoptions(edgeitems=150)
 
 k2 = np.array([[0, 1],
                [1, 0]])
@@ -19,19 +21,19 @@ b3_2 = np.array([[0, 0, 0, 1, 1],
 # print(list_aut(b3_2))
 
 # G e H grafos com mesma sequencia de grau mas não isomorfos:
-G = np.array([[0, 0, 1, 0, 0, 0],
-              [0, 0, 1, 0, 0, 0],
-              [1, 1, 0, 1, 0, 0],
-              [0, 0, 1, 0, 1, 0],
-              [0, 0, 0, 1, 0, 1],
-              [0, 0, 0, 0, 1, 0]])
+# G = np.array([[0, 0, 1, 0, 0, 0],
+#               [0, 0, 1, 0, 0, 0],
+#               [1, 1, 0, 1, 0, 0],
+#               [0, 0, 1, 0, 1, 0],
+#               [0, 0, 0, 1, 0, 1],
+#               [0, 0, 0, 0, 1, 0]])
 
-H = np.array([[0, 1, 0, 0, 0, 0],
-              [1, 0, 1, 0, 1, 0],
-              [0, 1, 0, 1, 0, 0],
-              [0, 0, 1, 0, 0, 0],
-              [0, 1, 0, 0, 0, 1],
-              [0, 0, 0, 0, 1, 0]])
+# H = np.array([[0, 1, 0, 0, 0, 0],
+#               [1, 0, 1, 0, 1, 0],
+#               [0, 1, 0, 1, 0, 0],
+#               [0, 0, 1, 0, 0, 0],
+#               [0, 1, 0, 0, 0, 1],
+#               [0, 0, 0, 0, 1, 0]])
 
 # vet_grauG=np.array(list(map(degree,G)))
 # LG=laplacian(G)
@@ -102,7 +104,52 @@ grotzsch=np.array([[0,1,1,0,0,0,0,1,0,0,1],
 # print(np.concatenate([G,np.transpose([fonte])]))
 # print(np.transpose([np.concatenate([fonte,np.array([0])])]))
 # print(ni2(c(4)))
-print(matching_bip(c(6)))
+# print(matching_bip(c(6)))
 # print(edges(c(7)))
-print(is_2bicritic(c(17)))
+# print(is_2bicritic(c(17)))
 # print(np.concatenate((G,np.transpose([fonte])),1))
+
+# print(tensorProduct(k(2),c(6)))
+# print(ni2(tensorProduct(k(3),k(3))))
+
+# print(maxDegree(tensorProduct(p(7),tensorProduct(p(2),p(3)))))
+# print(edges(mapGraph(k(3),k(4))))
+
+
+G2=np.array([[0,0,0,1,0,0],
+            [0,0,1,0,0,0],
+            [0,1,0,1,0,0],
+            [1,0,1,0,1,0],
+            [0,0,0,1,0,1],
+            [0,0,0,0,1,0]])
+H2= np.array([[0,0,0,0,1,0],
+            [0,0,1,0,0,0],
+            [0,1,0,1,0,0],
+            [0,0,1,0,1,0],
+            [1,0,0,1,0,1],
+            [0,0,0,0,1,0]])
+G=np.array([ [0, 1, 0, 0, 0, 0, 0, 0, 1,1],
+             [1, 0, 1, 0, 0, 0, 0, 0, 0,0],
+             [0, 1, 0, 1, 0, 0, 0, 0, 0,0],
+             [0, 0, 1, 0, 1, 0, 0, 0, 0,1],
+             [0, 0, 0, 1, 0, 1, 0, 0, 0,0],
+             [0, 0, 0, 0, 1, 0, 1, 0, 0,0],
+             [0, 0, 0, 0, 0, 1, 0, 1, 0,1],
+             [0, 0, 0, 0, 0, 0, 1, 0, 1,0],
+             [1, 0, 0, 0, 0, 0, 0, 1, 0,0],
+             [1, 0, 0, 1, 0, 0, 1, 0, 0,0]])
+
+F=np.array([[0,1,1,1],
+           [1,0,1,0],
+           [1,1,0,0],
+           [1,0,0,0]])
+
+# print(len(list_homo(c(5),k(4))))
+# print(verify_homo(lineGraph(k(5)),k(3)))
+# print(chromatic_number(lineGraph(k(5))))
+# print(lovasz_vector(H))
+print(len(list_homo(p(3),F)))
+print(len(list_homo(k(1,3),F)))
+print(len(list_homo(p(3),k(3))))
+print(len(list_homo(k(1,3),k(3))))
+print(find_core(F))
